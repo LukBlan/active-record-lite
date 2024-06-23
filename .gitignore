@@ -57,3 +57,6 @@ build-iPhoneSimulator/
 
 # RubyMine .idea
 *.idea
+
+## sqlite3 db file
+*.db
