@@ -59,4 +59,4 @@ build-iPhoneSimulator/
 *.idea
 
 ## sqlite3 db file
-*.db
+*.sqlite
