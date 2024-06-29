@@ -3,14 +3,15 @@ require_relative './services/db_connection'
 
 class SqlObject
   def self.columns
-    result = DBConnection.connection.prepare(<<-SQL)
+    @columns ||= (DBConnection.connection.prepare(<<-SQL)
     SELECT
         *
     FROM
         #{self.table_name}
     SQL
+    ).columns
 
-    result.columns
+
   end
 
   def self.table_name
@@ -25,4 +26,4 @@ end
 class Person < SqlObject
 end
 
-p Person.columns
+# p Person.columns
