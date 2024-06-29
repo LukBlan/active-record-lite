@@ -47,11 +47,25 @@ class SqlObject
       end
     end
   end
+
+  def self.all
+    query_result = DBConnection.connection.execute(<<-SQL)
+        SELECT
+            *
+        FROM
+            #{self.table_name}
+    SQL
+
+    self.parse_all(query_result)
+  end
+
+  def self.parse_all(query_result)
+    query_result.map { |result| self.new(result)}
+  end
 end
 
 class Person < SqlObject
   self.finalize!
 end
 
-person = Person.new({name: "Lucas"})
-p person.attributes
+p Person.all
