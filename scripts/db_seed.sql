@@ -1,23 +1,25 @@
 CREATE TABLE people (
+    id INTEGER PRIMARY KEY,
     name varchar(255),
     surname varchar(255),
     age int
 );
 
 CREATE TABLE animals (
+  id INTEGER PRIMARY KEY ,
   name VARCHAR(255),
   race VARCHAR(255),
   color VARCHAR(255)
 );
 
 INSERT INTO
-    people (name, surname, age)
+    people (id, name, surname, age)
 VALUES
-    ('Lucas', 'blanco', 28),
-    ('Fede', 'blanco', 30);
+    (NULL, 'Lucas', 'blanco', 28),
+    (NULL, 'Fede', 'blanco', 30);
 
 INSERT INTO
-    animals (name, race, color)
+    animals (id, name, race, color)
 VALUES
-    ('Tomas', 'dog1', 'blue'),
-    ('Max', 'dog1', 'red')
+    (NULL, 'Tomas', 'dog1', 'blue'),
+    (NULL, 'Max', 'dog1', 'red');
