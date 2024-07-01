@@ -46,7 +46,7 @@ class SqlObject
   end
 
   def attributes
-    @attributes ||= {}
+    @attributes ||= {"id" => nil}
   end
 
   def self.finalize!
@@ -63,6 +63,27 @@ class SqlObject
         @attributes[column_name] = value
       end
     end
+  end
+
+  def insert
+    map_keys = @attributes.keys.join(",")
+    map_attributes = @attributes.values.map do |value|
+      if value.is_a?(String)
+        "'#{value}'"
+      elsif value.nil?
+        "NULL"
+      else
+        value
+      end
+    end.join(",")
+
+    DBConnection.connection.execute(<<-SQL)
+        INSERT INTO
+            #{self.class.table_name} (#{map_keys})
+        VALUES (#{map_attributes})  
+    SQL
+
+    @attributes["id"] = DBConnection.connection.last_insert_row_id
   end
 
   def self.all
@@ -85,4 +106,6 @@ class Person < SqlObject
   self.finalize!
 end
 
-p Person.find(1)
+person = Person.new(name: "Tomas", surname: "Aurilio", age: 100)
+person.insert
+p person
