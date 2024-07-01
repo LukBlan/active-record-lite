@@ -2,6 +2,23 @@ require "active_support/core_ext/string"
 require_relative './services/db_connection'
 
 class SqlObject
+  def self.find(id)
+    query_result = DBConnection.connection.execute(<<-SQL, id: id)
+        SELECT
+          *
+        FROM
+          #{self.table_name}
+        WHERE
+          id = :id
+    SQL
+
+    if query_result.empty?
+      raise ArgumentError.new("Id don't exist in database")
+    else
+      return self.new(query_result[0])
+    end
+  end
+
   def self.columns
     @columns ||= (DBConnection.connection.prepare(<<-SQL)
     SELECT
@@ -68,4 +85,4 @@ class Person < SqlObject
   self.finalize!
 end
 
-p Person.all
+p Person.find(1)
