@@ -108,6 +108,16 @@ class SqlObject
     )
   end
 
+  def save
+    id = @attributes["id"]
+
+    if id.nil?
+      insert
+    else
+      update
+    end
+  end
+
   def self.all
     query_result = DBConnection.connection.execute(<<-SQL)
         SELECT
@@ -133,7 +143,8 @@ class Animal < SqlObject
 end
 
 animal = Animal.new(name: "Tomas", race: "dog2", color: "black")
+animal.save
 p animal
-animal.race = "dog1"
+animal.name = "Diego"
+animal.save
 p animal
-animal.update
