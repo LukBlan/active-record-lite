@@ -86,6 +86,28 @@ class SqlObject
     @attributes["id"] = DBConnection.connection.last_insert_row_id
   end
 
+  def update
+    id = @attributes["id"]
+    raise ArgumentError("Missing record in database") if id.nil?
+    filter_columns = self.class.columns.filter { |column| column != "id"}
+
+    map_attributes = filter_columns.map do |key|
+      value = @attributes[key]
+      final_value = value.is_a?(String) ? "'#{value}'" : value
+      "#{key} = #{final_value}"
+    end
+
+    DBConnection.connection.execute(<<-SQL
+        UPDATE
+            #{self.class.table_name}
+        SET
+          #{map_attributes.join(",")}
+        WHERE
+          id = #{id}
+    SQL
+    )
+  end
+
   def self.all
     query_result = DBConnection.connection.execute(<<-SQL)
         SELECT
@@ -106,6 +128,12 @@ class Person < SqlObject
   self.finalize!
 end
 
-person = Person.new(name: "Tomas", surname: "Aurilio", age: 100)
-person.insert
-p person
+class Animal < SqlObject
+  self.finalize!
+end
+
+animal = Animal.new(name: "Tomas", race: "dog2", color: "black")
+p animal
+animal.race = "dog1"
+p animal
+animal.update
