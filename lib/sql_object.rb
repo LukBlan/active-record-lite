@@ -1,7 +1,10 @@
 require "active_support/core_ext/string"
 require_relative './services/db_connection'
+require_relative 'searchable'
 
 class SqlObject
+  extend Searchable
+
   def self.find(id)
     query_result = DBConnection.connection.execute(<<-SQL, id: id)
         SELECT
@@ -143,8 +146,4 @@ class Animal < SqlObject
 end
 
 animal = Animal.new(name: "Tomas", race: "dog2", color: "black")
-animal.save
-p animal
-animal.name = "Diego"
-animal.save
-p animal
+p Animal.where(race: "dog2", color: "black")
