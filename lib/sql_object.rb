@@ -113,8 +113,12 @@ class SqlObject
     )
   end
 
+  def get_id
+    @attributes["id"]
+  end
+
   def save
-    id = @attributes["id"]
+    id = get_id
 
     if id.nil?
       insert
@@ -155,4 +159,4 @@ end
 
 
 
-p Toy.join(:owner)
+p Toy.find(1).owner
