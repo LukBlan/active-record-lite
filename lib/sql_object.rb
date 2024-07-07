@@ -1,9 +1,11 @@
 require "active_support/core_ext/string"
 require_relative './services/db_connection'
 require_relative 'searchable'
+require_relative './associations/associable'
 
 class SqlObject
   extend Searchable
+  extend Associatable
 
   def self.find(id)
     query_result = DBConnection.connection.execute(<<-SQL, id: id)
@@ -142,8 +144,15 @@ class Person < SqlObject
 end
 
 class Animal < SqlObject
+  has_many :toys, foreign_key: :owner_id, class_name: :Toy
   self.finalize!
 end
 
-animal = Animal.new(name: "Tomas", race: "dog2", color: "black")
-p Animal.where(race: "dog2", color: "black")
+class Toy < SqlObject
+  belongs_to :owner, foreign_key: :owner_id, class_name: :Animal
+  self.finalize!
+end
+
+
+
+p Toy.join(:owner)
